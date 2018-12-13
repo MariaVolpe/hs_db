@@ -27,7 +27,7 @@ CREATE TABLE Schools
     college_career_rate decimal(4,2),
     primary_address_line_1 varchar(50),
     city varchar(20),
-    postcode char(5),
+    postcode int(5),
     state_code char(2),
     borough varchar(20),
     latitude varchar(12),
