@@ -10,7 +10,7 @@ SELECT
 FROM Schools
 WHERE postcode = 10016;
 
--- where postcode is near given
+-- where postcode is NEAR (-10 < postcode < 10) given postcode
 SELECT
     CASE WHEN LENGTH(school_name) > 32
         THEN CONCAT(SUBSTRING(school_name, 1, 32), '...')
@@ -21,7 +21,7 @@ FROM Schools
 WHERE 10016-10 < postcode AND postcode < 10016+10
 ORDER BY postcode - 10016 ASC;
 
--- Sort school on average SAT score.
+-- Sort schools by average SAT score.
 SELECT
     CASE WHEN LENGTH(b.school_name) > 32
         THEN CONCAT(SUBSTRING(b.school_name, 1, 32), '...')
@@ -37,23 +37,23 @@ WHERE avg_sat_math_score IS NOT NULL
     AND avg_sat_reading_writing_score IS NOT NULL
 ORDER BY avg_total_sat_score DESC;
 
--- sort schools by highest ACT and SAT
+-- Sort schools by highest ACT and SAT
 SELECT
     CASE WHEN LENGTH(b.school_name) > 60
         THEN CONCAT(SUBSTRING(b.school_name, 1, 60), '...')
         ELSE b.school_name END AS school_name,
     B.dbn,
-    avg_sat_math_score+(avg_sat_reading_writing_score*2) AS total_sat_score,
+    avg_sat_math_score+(avg_sat_reading_writing_score*2) AS avg_sat_score,
     (avg_act_english_score+avg_act_math_score+avg_act_reading_score+avg_act_science_score)/4
-        AS total_act_score
+        AS avg_act_score
 FROM School_performances AS A
 JOIN Schools AS B
     ON A.dbn = B.dbn
 WHERE avg_sat_math_score IS NOT NULL
     AND avg_act_english_score IS NOT NULL
-ORDER BY total_sat_score+total_act_score DESC;
+ORDER BY avg_sat_score+avg_act_score DESC;
 
--- Sort school on average ACT score
+-- Sort schools on average ACT score
 SELECT
     CASE WHEN LENGTH(b.school_name) > 32
         THEN CONCAT(SUBSTRING(b.school_name, 1, 32), '...')
@@ -73,7 +73,7 @@ WHERE avg_act_english_score IS NOT NULL
     OR avg_act_science_score IS NOT NULL
 ORDER BY total_act_score DESC;
 
--- sort schools by smallest class size
+-- sort schools by smallest class size near given zip
 SELECT 
     CASE WHEN LENGTH(b.school_name) > 32
         THEN CONCAT(SUBSTRING(b.school_name, 1, 32), '...')
@@ -83,6 +83,7 @@ SELECT
 FROM Class_sizes AS A
 JOIN Schools AS B
     ON A.dbn = B.dbn
+WHERE 10016-10 < postcode AND postcode < 10016+10
 ORDER BY avg_class_size ASC
 LIMIT 30;
 
